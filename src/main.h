@@ -16,6 +16,7 @@
 #include "modules/camera.h"
 #include "modules/collision.h"
 #include "modules/model.h"
+#include "modules/ui.h"
 
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION            330
@@ -31,9 +32,11 @@
 #define GPurple4 CLITERAL(Color){   86,  6, 194, 255 } 
 #define GPurple5 CLITERAL(Color){  110, 10, 245, 255 }
 
-
-
-
-
+typedef enum {
+    LOGO     = 0,
+    MENU     = 1,
+    GAMEPLAY = 2,
+    END      = 3,
+} GameScenes;
 
 #endif

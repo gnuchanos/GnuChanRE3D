@@ -8,7 +8,7 @@ typedef struct {
     char    *ModelPath;
     Vector3  ModelPosition;
     float  ModelScale;
-} ModelGLTF;
+} Model3D;
 
 typedef struct {
     int AnimsFrameCounter;
@@ -17,10 +17,10 @@ typedef struct {
     int AnimsCount;
 } Animation;
 
-void LoadGLTFModel(ModelGLTF *ThisModel, char *ModelPath, Vector3 ModelPosition, float ModelScale);
-void DrawGLTFModel(ModelGLTF *ThisModel);
-void LoadAnimation(Animation *ThisAnimation, ModelGLTF *ThisModel);
-void PlayAnimation(Animation *ThisAnimation, ModelGLTF *ThisModel, bool PlayNow);
+void LoadModel3D(Model3D *ThisModel, char *ModelPath, Vector3 ModelPosition, float ModelScale); 
+void DrawModel3D(Model3D *ThisModel);
+void LoadAnimation3D(Animation *ThisAnimation, Model3D *ThisModel); 
+void PlayAnimation3D(Animation *ThisAnimation, Model3D *ThisModel, bool PlayNow); 
 
 
 

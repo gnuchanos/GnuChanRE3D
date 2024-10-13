@@ -1,0 +1,11 @@
+TODO LIST
+
+
+------:| 3D Systems
+-| Camera | Create Player - Update position |
+-| Wall Collision | Create Wall Position.gc and Scale.gc - Check Wall Hit True  - send back player old position else record position |
+-| Area System | Create Area - Check if Are Enter True |
+-| Gltf Animation have little problem if bones is not 1 part
+-| M3D Animations Works Fine | Load 3D - Load Anim - Play Anim - Render Model |
+------:| UI System
+-| Button | Create - Press - Render |

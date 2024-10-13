@@ -1,11 +1,18 @@
 #include "../main.h"
 #include "camera.h"
+#include <raylib.h>
 
 
 void DrawCollision(SolidCollision *ThisCollisions) {
     int WallCount = ThisCollisions->SolidObjectCount;
     for (int i = 0; i < WallCount; i++) {
-        DrawCube(ThisCollisions->Position[i], ThisCollisions->Scale[i].x, ThisCollisions->Scale[i].y, ThisCollisions->Scale[i].z, GPurple1);
+            if (ThisCollisions->SolidObjectIndex == i) {
+                DrawCube(ThisCollisions->Position[i], ThisCollisions->Scale[i].x, ThisCollisions->Scale[i].y, ThisCollisions->Scale[i].z, GPurple1);
+            } else {
+                DrawCube(ThisCollisions->Position[i], ThisCollisions->Scale[i].x, ThisCollisions->Scale[i].y, ThisCollisions->Scale[i].z, GPurple5);
+            }
+        //printf("Index:%d | X: %f | Y: %f | Z: %f | \n", i, ThisCollisions->Position[i].x, ThisCollisions->Position[i].y, ThisCollisions->Position[i].z);
+        //printf("Index:%d | X: %f | Y: %f | Z: %f | \n", i, ThisCollisions->Scale[i].x, ThisCollisions->Scale[i].y, ThisCollisions->Scale[i].z);
     }
 }
 
@@ -64,18 +71,43 @@ void WriteCollisionToFile(SolidCollision *ThisCollisions, char *Positions, char 
 
 
 // not finish yet
-void CollisionEdit(SolidCollision *ThisCollisions, _CameraGO *ThisPlayer, int IndexHere) {
-    if (isdigit(IndexHere)) { ThisCollisions->SolidObjectIndex = IndexHere;  } else { ThisCollisions->SolidObjectIndex = 0; }
+void CollisionEdit(SolidCollision *ThisCollisions, _CameraGO *ThisPlayer) {
+    int MaxIndexLimit = ThisCollisions->SolidObjectCount - 1;
+
     if (IsKeyPressed(KEY_Q) && ThisCollisions->SolidObjectIndex > 0) { 
         ThisCollisions->SolidObjectIndex--; }
-    else if (IsKeyPressed(KEY_E) && ThisCollisions->SolidObjectCount > ThisCollisions->SolidObjectIndex) { 
+    else if (IsKeyPressed(KEY_E) && MaxIndexLimit != ThisCollisions->SolidObjectIndex) { 
         ThisCollisions->SolidObjectIndex++; }
 
     if (IsKeyDown(KEY_LEFT_ALT)) {
-       ThisPlayer->StopMove = true;
+        ThisPlayer->StopMove = true;
+        
+        if (IsKeyDown(KEY_W)) {
+            ThisCollisions->Position[ThisCollisions->SolidObjectIndex].z -= 1 * GetFrameTime();
+        } else if (IsKeyDown(KEY_S)) {
+            ThisCollisions->Position[ThisCollisions->SolidObjectIndex].z += 1 * GetFrameTime();
+        }
+
+        if (IsKeyDown(KEY_A)) {
+            ThisCollisions->Position[ThisCollisions->SolidObjectIndex].x -= 1 * GetFrameTime();
+        } else if (IsKeyDown(KEY_D)) {
+            ThisCollisions->Position[ThisCollisions->SolidObjectIndex].x += 1 * GetFrameTime();
+        }
 
     } else if (IsKeyDown(KEY_LEFT_CONTROL)) {
-    
+        ThisPlayer->StopMove = true;
+        if (IsKeyDown(KEY_W)) { 
+            ThisCollisions->Scale[ThisCollisions->SolidObjectIndex].z -= 1 * GetFrameTime();
+        } else if (IsKeyDown(KEY_S)) {
+            ThisCollisions->Scale[ThisCollisions->SolidObjectIndex].z += 1 * GetFrameTime();        
+        }
+
+        if (IsKeyDown(KEY_A)) {
+            ThisCollisions->Scale[ThisCollisions->SolidObjectIndex].x += 1 * GetFrameTime(); 
+        } else if (IsKeyDown(KEY_D)) {
+            ThisCollisions->Scale[ThisCollisions->SolidObjectIndex].x -= 1 * GetFrameTime();
+        }
+
     } else { ThisPlayer->StopMove = false; }
     
 
@@ -114,31 +146,43 @@ void FPS_WallCollision(_CameraGO *ThisPlayer, SolidCollision *SolidObjects) {
 
 
 // This is for Triger Event ----------------------------------------------------------------------
-void FPS_Area(_CameraGO *ThisPlayer, Vector3 *AreaPosition, Vector3 *AreaScale, bool *EnterArea) {
+void FPS_Area(_CameraGO *ThisPlayer, Vector3 AreaPosition, Vector3 AreaScale, bool *EnterArea) {
     *EnterArea = false;
-    if (CheckCollisionBoxes(
-        (BoundingBox){
-            (Vector3){ 
-                ThisPlayer->GO.position.x - ThisPlayer->BodySize.x/2,
-                ThisPlayer->GO.position.y - ThisPlayer->BodySize.y/2,
-                ThisPlayer->GO.position.z - ThisPlayer->BodySize.z/2 },
-            (Vector3){ 
-                ThisPlayer->GO.position.x + ThisPlayer->BodySize.x/2,
-                ThisPlayer->GO.position.y + ThisPlayer->BodySize.y/2,
-                ThisPlayer->GO.position.z + ThisPlayer->BodySize.z/2 } 
-        },
 
-        (BoundingBox){
-            (Vector3){ 
-                AreaPosition->x - AreaScale->x/2,
-                AreaPosition->y - AreaScale->y/2,
-                AreaPosition->z - AreaScale->z/2 },
-            (Vector3){ 
-                AreaPosition->x + AreaScale->x/2,
-                AreaPosition->y + AreaScale->y/2,
-                AreaPosition->z + AreaScale->z/2 } 
-        })
-    ) { *EnterArea = true; }
+    // ThisPlayer için BoundingBox oluşturuluyor
+    BoundingBox playerBox = (BoundingBox){
+        (Vector3){ 
+            ThisPlayer->GO.position.x - ThisPlayer->BodySize.x / 2,
+            ThisPlayer->GO.position.y - ThisPlayer->BodySize.y / 2,
+            ThisPlayer->GO.position.z - ThisPlayer->BodySize.z / 2
+        },
+        (Vector3){ 
+            ThisPlayer->GO.position.x + ThisPlayer->BodySize.x / 2,
+            ThisPlayer->GO.position.y + ThisPlayer->BodySize.y / 2,
+            ThisPlayer->GO.position.z + ThisPlayer->BodySize.z / 2
+        }
+    };
+
+    // Area için BoundingBox oluşturuluyor
+    BoundingBox areaBox = (BoundingBox){
+        (Vector3){ 
+            AreaPosition.x - AreaScale.x / 2,
+            AreaPosition.y - AreaScale.y / 2,
+            AreaPosition.z - AreaScale.z / 2
+        },
+        (Vector3){ 
+            AreaPosition.x + AreaScale.x / 2,
+            AreaPosition.y + AreaScale.y / 2,
+            AreaPosition.z + AreaScale.z / 2
+        }
+    };
+
+    // Çarpışma kontrolü
+    if (CheckCollisionBoxes(playerBox, areaBox)) {
+        *EnterArea = true;
+    }
 }
+
+
 
 

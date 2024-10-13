@@ -11,6 +11,7 @@ typedef struct {
     bool    BodyHit;
     bool    ShowMouse;
     bool    StopMove;
+    bool    SettingsMode;
 } _CameraGO;
 
 _CameraGO GOCAM();
