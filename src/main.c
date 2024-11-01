@@ -26,15 +26,19 @@ int main(void) {
 
     // Load Test Model And Animation
     Model3D Test3D; 
-    LoadModel3D(&Test3D, "./Assets/Models/ball.m3d", (Vector3){0.0f, 1.5f, 0.0f}, 1.5f);
-    
+    LoadModel3D(&Test3D, "./Assets/Models/nv.m3d", (Vector3){0.0f, 0.0f, 0.0f}, 1.7f);
+    // Load Texture 
     Texture2D DefaultTexture = LoadTexture("./Assets/Texture/color_atlas.png");
-    Test3D.Model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = DefaultTexture;
-    Test3D.Model.materials[2].maps[MATERIAL_MAP_ALBEDO].color = GPurple1;
+    Texture2D NvM3DFaceTexture = LoadTexture("./Assets/Texture/face.png");
+    // Apply Texture and Color
+    Test3D.Model.materials[1].maps[MATERIAL_MAP_DIFFUSE].texture = DefaultTexture; // Color Palette
+    Test3D.Model.materials[2].maps[MATERIAL_MAP_DIFFUSE].texture = NvM3DFaceTexture; // Face
+    Test3D.Model.materials[4].maps[MATERIAL_MAP_ALBEDO].color = GPurple5; // Light
 
     // Load Animation 
     Animation Test3D_Animation; 
     LoadAnimation3D(&Test3D_Animation, &Test3D);
+    Test3D_Animation.AnimsID = 3;
 
 
 
@@ -107,10 +111,10 @@ int main(void) {
             FPS_Area(&CAM, AreaPosition, AreaScale, &AreaEnter);
             if (AreaEnter) { 
                 sprintf(AreaEnterDebug, "Area Entering: -> True"); 
-                skycolor = GPurple3;
+                skycolor = DARKGRAY;
             } else { 
                 sprintf(AreaEnterDebug, "Area Entering: -> False"); 
-                skycolor = BLUE;
+                skycolor = DARKBLUE;
             }
 
             // Play GLTF Animation

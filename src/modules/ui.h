@@ -33,4 +33,14 @@ typedef struct {
     Color     WindowColor;
 } TextBox;
 
+
+typedef struct {
+	Rectangle Slider;
+	Color     SliderColor;
+
+} Slider;
+
+
+
+
 #endif

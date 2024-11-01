@@ -11,7 +11,11 @@ import os
 
 
 class Compiler:
-    def __init__(self, buildName = "gcRun", CModulesDirName = "modules", OFilesDirName = "ofiles", BuildDirName = "build", 
+    def __init__(self, 
+                 buildName = "gcRun", 
+                 CModulesDirName = "modules", 
+                 OFilesDirName = "ofiles", 
+                 BuildDirName = "build", 
                  Cflags = "-Wall -O2 -std=c99 -lraylib -lGL -lm -lpthread -lrt -lX11") -> None:
 
         self.DefaultPath = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +53,7 @@ class Compiler:
                     print("-"*150, "\n")
 
 
-                    print(f"Paths Is Ready To Use | {self.PathModulesDir} | {self.PathOFilesDir} | {self.PathBuildDir} | \n")
+                    print(f"Paths Is Ready | {self.PathModulesDir} | {self.PathOFilesDir} | {self.PathBuildDir} | \n")
                     print("-"*150)
                     print(f"C Files Tree :-| {self.PathModulesDir}")
                     self.ModuleCompileReady = []
@@ -64,17 +68,25 @@ class Compiler:
                     print("First Linking Process")
                     print("-"*150)
                     os.system(f"gcc {self.CFlags} -c {self.DefaultPath}/main.c -o {self.PathOFilesDir}/main.o")
-                    print(f"gcc {self.CFlags} -c {self.DefaultPath}/main.c -o {self.PathOFilesDir}/main.o -> Linking Process Finish")
+                    print(f"gcc {self.CFlags} -c {self.DefaultPath}/main.c -o {self.PathOFilesDir}/main.o -> Finish")
                     for i in self.ModuleCompileReady:
-                        os.system(f"gcc {self.CFlags} -c {self.PathModulesDir}/{i} -o {self.PathOFilesDir}/{i[:-2]}.o")
-                        print(f"gcc {self.CFlags} -c {self.PathModulesDir}/{i} -o {self.PathOFilesDir}/{i[:-2]}.o -> Linking Process Finish")
+                        _GCC = f"gcc {self.CFlags}"
+                        _CFile = f"-c {self.PathModulesDir}/{i}"
+                        _Output = f"-o {self.PathOFilesDir}/{i[:-2]}.o"
+                        _Progress = f"{_GCC} {_CFile} {_Output}"
+                        os.system(_Progress)
+                        print(f"{_Progress} -> Finish")
                         self.AllOFileList.append(f"{self.PathOFilesDir}/{i[:-2]}.o")
 
 
                     _OFilesLongString = " ".join(self.AllOFileList)
                     if os.path.exists(f"{self.PathOFilesDir}/main.o"):
-                        os.system(f"gcc {self.CFlags} {self.PathOFilesDir}/main.o {_OFilesLongString} -o {self.PathBuildDir}/{self.buildName}")
-                        print(f"gcc {self.CFlags} {self.PathOFilesDir}/main.o {_OFilesLongString} -o {self.PathBuildDir}/{self.buildName}")
+                        _GCC = f"gcc {self.CFlags}"
+                        _MainOFile = f"{self.PathOFilesDir}/main.o "
+                        _Output = f"-o {self.PathBuildDir}/{self.buildName}"
+                        _Progress = f"{_GCC} {_MainOFile} {_OFilesLongString} {_Output}"
+                        os.system(_Progress)
+                        print(_Progress)
                     print("Compile is Finish!")
                     print("-"*150, " \n")
 
@@ -102,9 +114,5 @@ class Compiler:
 
 if __name__ == "__main__":
     gc = Compiler()
-
-
-
-
 
 
